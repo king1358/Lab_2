@@ -8,9 +8,23 @@ import {
   View,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-
-
+import { useState } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [checkPassword, setCheckPassword] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(false);
+  const checkpassword = () => {
+    setCheckPassword(password.length<6)
+  }
+  const checkemail = () => {
+    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    if (email.match(validRegex)){
+      setCheckEmail(false)
+    }
+    else setCheckEmail(true)
+  }
   return (
       <LinearGradient style={styles.container} colors={["#FBFBFB", "#588CDA"]}>
         <View style={styles.box}>
@@ -20,13 +34,40 @@ function Login() {
             style={styles.img}
           />
             <View style={styles.boxInput}>
-              <TextInput placeholder="Enter username..." style={styles.input} />
-              <TextInput placeholder="Enter password..." style={styles.input} />
+              <TextInput
+               placeholder="Enter username..." 
+               style={styles.input}
+               onChangeText={(value) => {
+                setEmail(value)
+                console.log(email)
+                
+               }}
+               onBlur = {() => {checkemail()}}
+                />
+              {
+                checkEmail ?
+                <Text style={{color: 'red'}}>This field must be email</Text>
+                :null
+              }
+              <TextInput 
+               secureTextEntry={true}
+               placeholder="Enter password..."
+               style={styles.input}
+               onChangeText={(value) => {
+                  setPassword(value)
+                  console.log(password)
+                  }}
+                onBlur = {() => {checkpassword()}}
+                  />
+               {
+                checkPassword ?
+                <Text style={{color: 'red'}}>Length of password limit is 6</Text>
+                :null
+               }
             </View>
-            <TouchableOpacity style={{ marginTop: 30, width: "60%" }}>
+            <TouchableOpacity style={{ marginTop: 30, width: "60%" }} >
               <Text style={styles.btn}>Login</Text>
             </TouchableOpacity>
-         
           <View
             style={{
               flexDirection: "row",
@@ -87,7 +128,6 @@ const styles = StyleSheet.create({
   },
   boxInput: {
     width: "80%",
-    alignItems: "center",
   },
   input: {
     borderWidth: 2,
