@@ -10,6 +10,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../Firebase/index"; 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,11 +20,8 @@ function Login() {
     setCheckPassword(password.length<6)
   }
   const checkemail = () => {
-    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-    if (email.match(validRegex)){
-      setCheckEmail(false)
-    }
-    else setCheckEmail(true)
+    let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    setCheckEmail(!email.match(validRegex))
   }
   return (
       <LinearGradient style={styles.container} colors={["#FBFBFB", "#588CDA"]}>
