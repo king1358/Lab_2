@@ -9,14 +9,19 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword,onAuthStateChanged  } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword,onAuthStateChanged,signOut  } from "firebase/auth";
 import { auth } from "../Firebase/index"; 
-function Login() {
+function Login({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isFieldEmail, setFieldEmail] = useState(false)
+  const [isFieldPassword, setFieldPassword] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
   const checkpassword = () => {
+    if (password.length === 0) {
+      
+    }
     setCheckPassword(password.length<6)
   }
   const checkemail = () => {
@@ -26,16 +31,7 @@ function Login() {
   const handleSubmit = () => {
     signInWithEmailAndPassword(auth,email,password)
       .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
-            const uid = user.uid;
-            alert("Tài khoảng đã đăng nhập")
-          } else {
-            alert("Đăng nhập thành công")
-          }
-        });
+        navigation.navigate("HomeScreen");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -57,7 +53,6 @@ function Login() {
                style={styles.input}
                onChangeText={(value) => {
                 setEmail(value)
-
                }}
                onBlur = {() => {checkemail()}}
                 />
