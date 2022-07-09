@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword,onAuthStateChanged  } from "firebase/auth";
 import { auth } from "../Firebase/index"; 
 function Login() {
   const [email, setEmail] = useState('');
@@ -22,6 +22,26 @@ function Login() {
   const checkemail = () => {
     let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     setCheckEmail(!email.match(validRegex))
+  }
+  const handleSubmit = () => {
+    signInWithEmailAndPassword(auth,email,password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            const uid = user.uid;
+            alert("Tài khoảng đã đăng nhập")
+          } else {
+            alert("Đăng nhập thành công")
+          }
+        });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorCode + "\n" + errorMessage)
+      });
   }
   return (
       <LinearGradient style={styles.container} colors={["#FBFBFB", "#588CDA"]}>
@@ -37,8 +57,7 @@ function Login() {
                style={styles.input}
                onChangeText={(value) => {
                 setEmail(value)
-                console.log(email)
-                
+
                }}
                onBlur = {() => {checkemail()}}
                 />
@@ -53,7 +72,6 @@ function Login() {
                style={styles.input}
                onChangeText={(value) => {
                   setPassword(value)
-                  console.log(password)
                   }}
                 onBlur = {() => {checkpassword()}}
                   />
@@ -63,7 +81,7 @@ function Login() {
                 :null
                }
             </View>
-            <TouchableOpacity style={{ marginTop: 30, width: "60%" }} >
+            <TouchableOpacity style={{ marginTop: 30, width: "60%" }} onPress = {() => {handleSubmit()}} >
               <Text style={styles.btn}>Login</Text>
             </TouchableOpacity>
           <View
